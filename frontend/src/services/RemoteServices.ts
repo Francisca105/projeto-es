@@ -812,9 +812,22 @@ export default class RemoteServices {
 
   // Volunteer Profile Controller
 
-  static async getVolunteerProfile(volunteerId: number): Promise<VolunteerProfile> {
+  static async getVolunteerProfile(
+    volunteerId: number,
+  ): Promise<VolunteerProfile> {
     return httpClient
       .get(`/profile/volunteer/${volunteerId}`)
+      .then((response) => {
+        return new VolunteerProfile(response.data);
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async createVolunteerProfile(volunteerProfile: VolunteerProfile) {
+    return httpClient
+      .post('/profile/volunteer', volunteerProfile)
       .then((response) => {
         return new VolunteerProfile(response.data);
       })
