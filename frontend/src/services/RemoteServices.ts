@@ -8,6 +8,7 @@ import Institution from '@/models/institution/Institution';
 import Activity from '@/models/activity/Activity';
 import RegisterInstitution from '@/models/institution/RegisterInstitution';
 import RegisterVolunteer from '@/models/volunteer/RegisterVolunteer';
+import VolunteerProfile from '@/models/volunteer/VolunteerProfile';
 import RegisterMember from '@/models/member/RegisterMember';
 import AuthPasswordDto from '@/models/user/AuthPasswordDto';
 import Theme from '@/models/theme/Theme';
@@ -803,6 +804,19 @@ export default class RemoteServices {
         return response.data.map((theme: any) => {
           return new Theme(theme);
         });
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  // Volunteer Profile Controller
+
+  static async getVolunteerProfile(volunteerId: number): Promise<VolunteerProfile> {
+    return httpClient
+      .get(`/profile/volunteer/${volunteerId}`)
+      .then((response) => {
+        return new VolunteerProfile(response.data);
       })
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));
