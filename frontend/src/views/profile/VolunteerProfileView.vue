@@ -7,15 +7,45 @@
         <p><strong>Short Bio: </strong> SHOW SHORT BIO HERE</p>
       </div>
       <div class="stats-container">
+        <!-- Total Enrollments -->
         <div class="items">
           <div ref="volunteerId" class="icon-wrapper">
-            <span>42</span>
+            <span>{{ this.profile.numTotalEnrollments }}</span>
           </div>
           <div class="project-name">
             <p>Total Enrollments</p>
           </div>
         </div>
-        <!-- TODO: Change 42 above and add other fields here -->
+
+        <!-- Total Participations -->
+        <div class="items">
+          <div ref="volunteerId" class="icon-wrapper">
+            <span>{{ this.profile.numTotalParticipations }}</span>
+          </div>
+          <div class="project-name">
+            <p>Total Participations</p>
+          </div>
+        </div>
+
+        <!-- Total Assessments -->
+        <div class="items">
+          <div ref="volunteerId" class="icon-wrapper">
+            <span>{{ this.profile.numTotalAssessments }}</span>
+          </div>
+          <div class="project-name">
+            <p>Total Assessments</p>
+          </div>
+        </div>
+
+        <!-- Average Rating -->
+        <div class="items">
+          <div ref="volunteerId" class="icon-wrapper">
+            <span>{{ this.profile.averageRating }}</span>
+          </div>
+          <div class="project-name">
+            <p>Average Rating</p>
+          </div>
+        </div>
       </div>
 
       <div>
@@ -59,18 +89,20 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import RemoteServices from "@/services/RemoteServices";
-import Participation from "@/models/participation/Participation";
-import Activity from "@/models/activity/Activity";
+import RemoteServices from '@/services/RemoteServices';
+import Participation from '@/models/participation/Participation';
+import Activity from '@/models/activity/Activity';
+import VolunteerProfile from '@/models/volunteer/VolunteerProfile';
+import Volunteer from '@/models/volunteer/Volunteer';
 
 @Component({
-  components: {
-  }
+  components: {},
 })
 export default class VolunteerProfileView extends Vue {
   userId: number = 0;
 
   activities: Activity[] = [];
+  profile: VolunteerProfile = new VolunteerProfile();
 
   search: string = '';
   headers: object = [
@@ -97,7 +129,7 @@ export default class VolunteerProfileView extends Vue {
       value: 'memberReview',
       align: 'left',
       width: '40%',
-    }
+    },
   ];
 
   async created() {
@@ -106,8 +138,25 @@ export default class VolunteerProfileView extends Vue {
     try {
       this.userId = Number(this.$route.params.id);
       this.activities = await RemoteServices.getActivities();
-
+      console.log(this.activities);
       // TODO
+      this.profile = await RemoteServices.getVolunteerProfile(this.userId);
+      if (!this.profile.id) {
+        // Volunteer
+        this.profile.volunteer = new Volunteer();
+        this.profile.volunteer.id = this.userId;
+
+        this.profile.shortBio = 'This is a short bio';
+
+        this.profile.selectedParticipations = [];
+        // TODO: esta a ficar preso ao criar o perfil
+        // console.log('Creating new profile');
+        // console.log(await RemoteServices.createVolunteerProfile(this.profile));
+        // console.log('Profile created');
+        // this.profile = await RemoteServices.getVolunteerProfile(this.userId);
+        // console.log(this.profile);
+      }
+      console.log(this.profile);
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -115,19 +164,20 @@ export default class VolunteerProfileView extends Vue {
   }
 
   activityName(participation: Participation) {
-    return this.activities.find(activity => activity.id == participation.activityId)?.name;
+    return this.activities.find(
+      (activity) => activity.id == participation.activityId,
+    )?.name;
   }
 
   institutionName(participation: Participation) {
-    let activity = this.activities.find(activity => activity.id == participation.activityId);
+    let activity = this.activities.find(
+      (activity) => activity.id == participation.activityId,
+    );
     return activity?.institution.name;
   }
 
   getMemberRating(participation: Participation): string {
-    if (
-      !participation ||
-      participation.memberRating == null
-    ) {
+    if (!participation || participation.memberRating == null) {
       return '';
     }
     return this.convertToStars(participation.memberRating);
