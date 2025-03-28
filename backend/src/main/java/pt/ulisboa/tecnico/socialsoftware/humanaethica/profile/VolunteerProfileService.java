@@ -11,7 +11,9 @@ import pt.ulisboa.tecnico.socialsoftware.humanaethica.profile.repository.Volunte
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.domain.Volunteer;
 import pt.ulisboa.tecnico.socialsoftware.humanaethica.user.repository.UserRepository;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.humanaethica.exceptions.ErrorMessage.*;
 
@@ -44,5 +46,18 @@ public class VolunteerProfileService {
         volunteerProfileRepository.save(volunteerProfile);
 
         return new VolunteerProfileDto(volunteerProfile);
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public List<VolunteerProfileDto> getAllVolunteerProfiles() {
+        List<VolunteerProfile> profiles = volunteerProfileRepository.findAll();
+        
+        if (profiles.isEmpty()) { // TODO: check this
+            throw new HEException(VOLUNTEER_PROFILE_NOT_FOUND);
+        }
+        
+        return profiles.stream()
+                .map(VolunteerProfileDto::new)
+                .collect(Collectors.toList());
     }
 }
