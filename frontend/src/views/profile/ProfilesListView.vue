@@ -64,12 +64,14 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import { ISOtoString } from "../../services/ConvertDateService";
+import RemoteServices from '@/services/RemoteServices';
+import VolunteerProfile from '@/models/volunteer/VolunteerProfile';
 
 @Component({
   methods: { ISOtoString }
 })
 export default class ProfilesListView extends Vue {
-  //volunteerProfiles: VolunteerProfile[] = []; // TODO: this is the object that will be used to fill in the table
+  volunteerProfiles: VolunteerProfile[] = []; // this is the object that will be used to fill in the table
   //institutionProfiles: InstitutionProfile[] = []; // TODO: this is the object that will be used to fill in the table
 
   search: string = '';
@@ -135,7 +137,7 @@ export default class ProfilesListView extends Vue {
   async created() {
     await this.$store.dispatch('loading');
     try {
-      // TODO
+      this.volunteerProfiles = await RemoteServices.getAllVolunteerProfiles();
     } catch (error) {
       await this.$store.dispatch('error', error);
     }

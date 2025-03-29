@@ -1,7 +1,14 @@
 <template>
   <div class="container">
-    <!-- TODO: Add creation button here (only if there is no profile) -->
-    <div>
+    <!-- Button to Create Volunteer Profile -->
+    <button
+      v-if="!this.profile.id"
+      @click="createProfile"
+      class="btn btn-primary"
+    >
+      Create Volunteer Profile
+    </button>
+    <div v-else>
       <h1>Volunteer: {{this.profile.volunteer?.name}}</h1>
       <div class="text-description">
         <p><strong>Short Bio: </strong> {{this.profile.shortBio}}</p>

@@ -825,11 +825,22 @@ export default class RemoteServices {
       });
   }
 
-  static async createVolunteerProfile(volunteerProfile: VolunteerProfile) {
+  static async createVolunteerProfile(volunteerProfile: VolunteerProfile): Promise<VolunteerProfile> {
     return httpClient
       .post('/profile/volunteer', volunteerProfile)
       .then((response) => {
         return new VolunteerProfile(response.data);
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getAllVolunteerProfiles(): Promise<VolunteerProfile[]> {
+    return httpClient
+      .get('/profile/volunteer')
+      .then((response) => {
+        return response.data.map((profileData: any) => new VolunteerProfile(profileData));
       })
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));
