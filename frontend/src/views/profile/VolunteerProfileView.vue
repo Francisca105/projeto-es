@@ -2,9 +2,9 @@
   <div class="container">
     <!-- TODO: Add creation button here (only if there is no profile) -->
     <div>
-      <h1>Volunteer: SHOW VOLUNTEER NAME HERE</h1>
+      <h1>Volunteer: {{this.profile.volunteer?.name}}</h1>
       <div class="text-description">
-        <p><strong>Short Bio: </strong> SHOW SHORT BIO HERE</p>
+        <p><strong>Short Bio: </strong> {{this.profile.shortBio}}</p>
       </div>
       <div class="stats-container">
         <!-- Total Enrollments -->
