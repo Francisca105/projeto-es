@@ -1,17 +1,19 @@
 <template>
   <div class="container">
     <!-- Button to Create Volunteer Profile -->
-    <button
-      v-if="!this.profile.id"
-      @click="createProfile"
-      class="btn btn-primary"
-    >
-      Create Volunteer Profile
-    </button>
+    <div class="horizontal-btn-container" v-if="!this.profile.id">
+      <h1>Volunteer Profile</h1>
+      <div class="no-profile-message">
+        <p>No volunteer profile found. Click the button below to create a new one!</p>
+      </div>
+      <v-btn depressed @click="createProfile" color="blue darken-2" data-cy="userLoginButton"  class="white--text">
+        CREATE MY PROFILE
+      </v-btn>
+    </div>
     <div v-else>
-      <h1>Volunteer: {{this.profile.volunteer?.name}}</h1>
+      <h1>Volunteer: {{ this.profile.volunteer?.name }}</h1>
       <div class="text-description">
-        <p><strong>Short Bio: </strong> {{this.profile.shortBio}}</p>
+        <p><strong>Short Bio: </strong> {{ this.profile.shortBio }}</p>
       </div>
       <div class="stats-container">
         <!-- Total Enrollments -->
@@ -59,13 +61,8 @@
         <h2>Selected Participations</h2>
         <div>
           <v-card class="table">
-            <v-data-table
-              :headers="headers"
-              :search="search"
-              disable-pagination
-              :hide-default-footer="true"
-              :mobile-breakpoint="0"
-            >
+            <v-data-table :headers="headers" :search="search" disable-pagination :hide-default-footer="true"
+              :mobile-breakpoint="0">
               <template v-slot:item.activityName="{ item }">
                 {{ activityName(item) }}
               </template>
@@ -77,12 +74,7 @@
               </template>
               <template v-slot:top>
                 <v-card-title>
-                  <v-text-field
-                    v-model="search"
-                    append-icon="search"
-                    label="Search"
-                    class="mx-2"
-                  />
+                  <v-text-field v-model="search" append-icon="search" label="Search" class="mx-2" />
                   <v-spacer />
                 </v-card-title>
               </template>
@@ -145,9 +137,9 @@ export default class VolunteerProfileView extends Vue {
     try {
       this.userId = Number(this.$route.params.id);
       this.activities = await RemoteServices.getActivities();
-      console.log(this.activities);
       // TODO
       this.profile = await RemoteServices.getVolunteerProfile(this.userId);
+      console.log("ID:  ", this.profile.id);
       if (!this.profile.id) {
         // Volunteer
         this.profile.volunteer = new Volunteer();
@@ -163,7 +155,24 @@ export default class VolunteerProfileView extends Vue {
         // this.profile = await RemoteServices.getVolunteerProfile(this.userId);
         // console.log(this.profile);
       }
-      console.log(this.profile);
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+    await this.$store.dispatch('clearLoading');
+  }
+
+  async createProfile() {
+    await this.$store.dispatch('loading');
+    try {
+      // Cria um novo perfil com valores padrão
+      const newProfile = new VolunteerProfile();
+      newProfile.volunteer = new Volunteer();
+      newProfile.volunteer.id = this.userId;
+      newProfile.shortBio = 'Tell us about yourself...'; // Texto padrão
+      
+      // Chama o serviço para criar o perfil
+      const createdProfile = await RemoteServices.createVolunteerProfile(newProfile);
+      this.profile = createdProfile;
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -260,7 +269,7 @@ export default class VolunteerProfileView extends Vue {
   }
 }
 
-.text-description {
+.no-profile-message {
   display: block;
   padding: 1em;
 }
