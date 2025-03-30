@@ -52,10 +52,6 @@ public class VolunteerProfileService {
     public List<VolunteerProfileDto> getAllVolunteerProfiles() {
         List<VolunteerProfile> profiles = volunteerProfileRepository.findAll();
         
-        if (profiles.isEmpty()) { // TODO: check this
-            throw new HEException(VOLUNTEER_PROFILE_NOT_FOUND);
-        }
-        
         return profiles.stream()
                 .map(VolunteerProfileDto::new)
                 .collect(Collectors.toList());
