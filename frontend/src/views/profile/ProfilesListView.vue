@@ -51,12 +51,13 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { ISOtoString } from "../../services/ConvertDateService";
+import { ISOtoString } from "@/services/ConvertDateService";
+import { show } from 'cli-cursor';
 import RemoteServices from '@/services/RemoteServices';
 import VolunteerProfile from '@/models/volunteer/VolunteerProfile';
 
-@Component({
-  methods: { ISOtoString }
+@Component({  
+  methods: { ISOtoString, show }
 })
 export default class ProfilesListView extends Vue {
   volunteerProfiles: VolunteerProfile[] = []; // this is the object that will be used to fill in the table
@@ -154,7 +155,7 @@ export default class ProfilesListView extends Vue {
   transition: color 0.3s, transform 0.2s;
 
   &:hover {
-    color: #1976D2;
+    color: #263238;
     transform: scale(1.1);
   }
 

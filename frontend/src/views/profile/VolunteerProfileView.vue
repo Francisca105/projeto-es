@@ -83,6 +83,15 @@
         </div>
       </div>
     </div>
+
+      <volunteerProfileDialog
+        v-if="volunteerProfileDialog"
+        v-model="volunteerProfileDialog"
+        :volunteer="newProfile"
+        @close-profile-dialog="onCloseProfileDialog"
+        @create-profile-dialog="onCreateProfileDialog"
+      />
+
   </div>
 </template>
 
@@ -93,15 +102,21 @@ import Participation from '@/models/participation/Participation';
 import Activity from '@/models/activity/Activity';
 import VolunteerProfile from '@/models/volunteer/VolunteerProfile';
 import Volunteer from '@/models/volunteer/Volunteer';
+import VolunteerProfileDialog from '@/views/profile/VolunteerProfileDialog.vue';
 
 @Component({
-  components: {},
+  components: {
+    'volunteerProfileDialog': VolunteerProfileDialog
+  },
 })
 export default class VolunteerProfileView extends Vue {
   userId: number = 0;
 
   activities: Activity[] = [];
   profile: VolunteerProfile = new VolunteerProfile();
+
+  volunteerProfileDialog: boolean = false;
+  private newProfile: VolunteerProfile = new VolunteerProfile();
 
   search: string = '';
   headers: object = [
@@ -161,22 +176,25 @@ export default class VolunteerProfileView extends Vue {
     await this.$store.dispatch('clearLoading');
   }
 
-  async createProfile() {
+  async onCreateProfileDialog() {
     await this.$store.dispatch('loading');
     try {
-      // Cria um novo perfil com valores padrão
-      const newProfile = new VolunteerProfile();
-      newProfile.volunteer = new Volunteer();
-      newProfile.volunteer.id = this.userId;
-      newProfile.shortBio = 'Tell us about yourself...'; // Texto padrão
-      
       // Chama o serviço para criar o perfil
-      const createdProfile = await RemoteServices.createVolunteerProfile(newProfile);
+      const createdProfile = await RemoteServices.createVolunteerProfile(this.newProfile);
       this.profile = createdProfile;
+      this.volunteerProfileDialog = false;
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
+  }
+
+  createProfile() {
+    this.newProfile = new VolunteerProfile();
+    this.newProfile.volunteer = new Volunteer();
+    this.newProfile.volunteer.id = this.userId;
+    this.newProfile.selectedParticipations = [];
+    this.volunteerProfileDialog = true;
   }
 
   activityName(participation: Participation) {
@@ -203,6 +221,11 @@ export default class VolunteerProfileView extends Vue {
     const fullStars = '★'.repeat(Math.floor(rating));
     const emptyStars = '☆'.repeat(Math.floor(5 - rating));
     return `${fullStars}${emptyStars} ${rating}/5`;
+  }
+
+  onCloseProfileDialog() {
+    this.volunteerProfileDialog = false;
+    // TODO: Check if needs anything else to be reseted
   }
 }
 </script>
