@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <!-- Button to Create Volunteer Profile -->
-    <div class="horizontal-btn-container" v-if="!this.profile.id">
+    <div class="horizontal-btn-container" v-if="!profile.id">
       <h1>Volunteer Profile</h1>
       <div class="no-profile-message">
         <p>No volunteer profile found. Click the button below to create a new one!</p>
@@ -11,15 +11,15 @@
       </v-btn>
     </div>
     <div v-else>
-      <h1>Volunteer: {{ this.profile.volunteer?.name }}</h1>
+      <h1>Volunteer: {{ profile.volunteer?.name }}</h1>
       <div class="text-description">
-        <p><strong>Short Bio: </strong> {{ this.profile.shortBio }}</p>
+        <p><strong>Short Bio: </strong> {{ profile.shortBio }}</p>
       </div>
       <div class="stats-container">
         <!-- Total Enrollments -->
         <div class="items">
           <div ref="volunteerId" class="icon-wrapper">
-            <span>{{ this.profile.numTotalEnrollments }}</span>
+            <span>{{ profile.numTotalEnrollments }}</span>
           </div>
           <div class="project-name">
             <p>Total Enrollments</p>
@@ -29,7 +29,7 @@
         <!-- Total Participations -->
         <div class="items">
           <div ref="volunteerId" class="icon-wrapper">
-            <span>{{ this.profile.numTotalParticipations }}</span>
+            <span>{{ profile.numTotalParticipations }}</span>
           </div>
           <div class="project-name">
             <p>Total Participations</p>
@@ -39,7 +39,7 @@
         <!-- Total Assessments -->
         <div class="items">
           <div ref="volunteerId" class="icon-wrapper">
-            <span>{{ this.profile.numTotalAssessments }}</span>
+            <span>{{ profile.numTotalAssessments }}</span>
           </div>
           <div class="project-name">
             <p>Total Assessments</p>
@@ -49,7 +49,7 @@
         <!-- Average Rating -->
         <div class="items">
           <div ref="volunteerId" class="icon-wrapper">
-            <span>{{ this.profile.averageRating }}</span>
+            <span>{{ profile.averageRating }}</span>
           </div>
           <div class="project-name">
             <p>Average Rating</p>
@@ -57,7 +57,7 @@
         </div>
       </div>
 
-      <div>
+      <div v-if="profile.selectedParticipations.length != 0" >
         <h2>Selected Participations</h2>
         <div>
           <v-card class="table">
