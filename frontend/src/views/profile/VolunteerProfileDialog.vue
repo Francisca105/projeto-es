@@ -121,6 +121,12 @@ export default {
   computed: {
     isDialogOpen() {
       return this.volunteerProfileDialog;
+    },
+    canSave() {
+      return (
+        !!this.volunteerProfile.shortBio &&
+        this.volunteerProfile.shortBio.length >= 10
+      );
     }
   },
   mounted() {
@@ -133,12 +139,6 @@ export default {
     },
     onSave() {
       this.$emit('create-profile-dialog');
-    },
-    canSave() {
-      return (
-        !!this.volunteerProfile.shortBio &&
-        this.volunteerProfile.shortBio.length >= 10
-      );
     }
   }
 }
