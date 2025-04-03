@@ -8,7 +8,8 @@
         <div class="mb-4">
           <label class="text-subtitle-2 font-weight-medium">*Short bio</label>
             <v-text-field
-              v-model="volunteer.shortBio"
+              data-cy="volunteerProfileCreationShortBio"
+              v-model="volunteerProfile.shortBio"
               outlined
               dense
               placeholder="Enter a short bio"
@@ -23,27 +24,29 @@
           
           <v-data-table
             :headers="headers"
-            :items="volunteer.participations"
+            :items="participations"
             :items-per-page="5"
             show-select
+            v-model="volunteerProfile.selectedParticipations"
             class="elevation-1"
-          >
-            <template v-slot:item.rating="{ item }">
-              <v-rating
-                v-if="item.rating"
-                :value="parseInt(item.rating)"
-                color="amber"
-                dense
-                half-increments
-                readonly
-                size="18"
-              ></v-rating>
-              <span v-else>-</span>
+            >
+
+            <template v-slot:item.activity_name="{ item }">
+              {{ activityName(item) }}
             </template>
             
-            <template v-slot:item.review="{ item }">
-              {{ item.review || '-' }}
+            <template v-slot:item.institution_name="{ item }">
+              {{ institutionName(item) }}
             </template>
+
+            <template v-slot:item.rating="{ item }">
+              {{ getMemberRating(item) }}
+            </template>
+
+            <template v-slot:item.review="{ item }">
+              {{ item.memberReview || '-' }}
+            </template>
+
           </v-data-table>
         </div>
       </v-card-text>
@@ -58,6 +61,9 @@
 </template>
 
 <script>
+import Participation from '@/models/participation/Participation';
+import VolunteerProfile from '@/models/volunteer/VolunteerProfile';
+
 export default {
   name: 'VolunteerProfileDialog',
   props: {
@@ -65,21 +71,28 @@ export default {
       type: Boolean,
       default: false
     },
-    volunteer: {
-      type: Object,
+    volunteerProfile: {
+      type: VolunteerProfile,
       default: () => ({
         bio: '',
         participations: []
       })
-    }
+    },
+    participations: {
+      type: Array[Participation],
+      default: () => []
+    },
+    activityName: Function,
+    institutionName: Function,
+    getMemberRating: Function
   },
   data() {
     return {
       volunteerProfileDialog: this.value,
       headers: [
         { text: '', value: 'icon', sortable: false, width: '50px' },
-        { text: 'Activity Name', value: 'activityName' },
-        { text: 'Institution', value: 'institution' },
+        { text: 'Activity Name', value: 'activity_name' },
+        { text: 'Institution', value: 'institution_name' },
         { text: 'Rating', value: 'rating' },
         { text: 'Review', value: 'review' },
         { text: 'Acceptance Date', value: 'acceptanceDate' }
@@ -90,8 +103,8 @@ export default {
     value(newValue) {
       this.volunteerProfileDialog = newValue;
     },
-    volunteer(newValue) {
-      this.volunteer = newValue;
+    volunteerProfile(newValue) {
+      this.volunteerProfile = newValue;
     }
   },
   computed: {

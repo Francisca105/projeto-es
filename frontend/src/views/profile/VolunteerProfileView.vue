@@ -62,7 +62,7 @@
         <div>
           <v-card class="table">
             <v-data-table :headers="headers" :search="search" disable-pagination :hide-default-footer="true"
-              :mobile-breakpoint="0">
+              :mobile-breakpoint="0" :items="profile.selectedParticipations">
               <template v-slot:item.activityName="{ item }">
                 {{ activityName(item) }}
               </template>
@@ -87,7 +87,11 @@
       <volunteerProfileDialog
         v-if="volunteerProfileDialog"
         v-model="volunteerProfileDialog"
-        :volunteer="newProfile"
+        :volunteerProfile="newProfile"
+        :participations="participations"
+        :activityName="activityName"
+        :institutionName="institutionName"
+        :getMemberRating="getMemberRating"
         @close-profile-dialog="onCloseProfileDialog"
         @create-profile-dialog="onCreateProfileDialog"
       />
@@ -113,6 +117,7 @@ export default class VolunteerProfileView extends Vue {
   userId: number = 0;
 
   activities: Activity[] = [];
+  participations: Participation[] = [];
   profile: VolunteerProfile = new VolunteerProfile();
 
   volunteerProfileDialog: boolean = false;
@@ -151,25 +156,13 @@ export default class VolunteerProfileView extends Vue {
 
     try {
       this.userId = Number(this.$route.params.id);
-      this.activities = await RemoteServices.getActivities();
-      // TODO
       this.profile = await RemoteServices.getVolunteerProfile(this.userId);
-      console.log("ID:  ", this.profile.id);
-      if (!this.profile.id) {
-        // Volunteer
-        this.profile.volunteer = new Volunteer();
-        this.profile.volunteer.id = this.userId;
-
-        this.profile.shortBio = 'This is a short bio';
-
-        this.profile.selectedParticipations = [];
-        // TODO: esta a ficar preso ao criar o perfil
-        // console.log('Creating new profile');
-        // console.log(await RemoteServices.createVolunteerProfile(this.profile));
-        // console.log('Profile created');
-        // this.profile = await RemoteServices.getVolunteerProfile(this.userId);
-        // console.log(this.profile);
+      if(!this.profile.id) {
+        this.activities = await RemoteServices.getActivities();
+        this.participations = await RemoteServices.getVolunteerParticipations();
       }
+
+      console.log("created XY", this.activities, this.participations);
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -180,6 +173,7 @@ export default class VolunteerProfileView extends Vue {
     await this.$store.dispatch('loading');
     try {
       // Chama o serviço para criar o perfil
+      console.log("onCreateProfileDialog newProfile", this.newProfile);
       const createdProfile = await RemoteServices.createVolunteerProfile(this.newProfile);
       this.profile = createdProfile;
       this.volunteerProfileDialog = false;
