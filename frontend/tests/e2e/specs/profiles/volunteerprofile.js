@@ -9,7 +9,8 @@ describe('VolunteerProfile', () => {
     afterEach(() => {
       cy.deleteAllButArs();
     });
-  
+
+    
     it('creates volunteer profile without participations', () => {
       cy.demoVolunteerLogin();
         const SHORT_BIO = 'Test short bio for Cypress';
@@ -82,7 +83,6 @@ describe('VolunteerProfile', () => {
       // Write short bio
       cy.get('[data-cy="volunteerProfileCreationShortBio"]').type(SHORT_BIO);
 
-      // TODO: Check this
       cy.get('.v-data-table').should('contain', '★★★★★ 5/5');
 
       // Select the first participation
@@ -117,6 +117,7 @@ describe('VolunteerProfile', () => {
       cy.logout();
     });
 
+
     it('get volunteer profile', () => {
       // Starts without any profiles
       cy.visit('/profiles/view');
@@ -139,11 +140,10 @@ describe('VolunteerProfile', () => {
       const SHORT_BIO = 'Test short bio for Cypress';
   
       // Intercept profile API calls
-      // cy.intercept('GET', '/profiles/volunteer/3').as('getProfile');
       cy.visit('/profiles/view');
 
       cy.get('.table').first().within(() => {
-        cy.get('thead th').should('have.length', 5); // 5 colunas conforme seus headers
+        cy.get('thead th').should('have.length', 5);
         cy.contains('th', 'Name');
         cy.contains('th', 'Short Bio');
         cy.contains('th', 'Registration Date');
@@ -171,57 +171,16 @@ describe('VolunteerProfile', () => {
       // Verify navigation to profile view
       cy.url().should('include', `/profiles/volunteer/`);
       
-      // Navigate to profile page
-      // cy.visit('/profiles/volunteer/3');
-  
-      // // Verify profile details
+      // Verify profile details
       cy.get('.text-description p')
         .should('contain', SHORT_BIO);
   
-      // // Verify stats
+      // Verify stats
       const stats = ['Total Enrollments', 'Total Participations', 'Total Assessments', 'Average Rating'];
       stats.forEach((stat, index) => {
         cy.get('.stats-container .items').eq(index)
           .should('contain', stat)
           .and('contain', '0');
       });
-  
-      // // Verify participations table
-      // cy.get('.v-data-table').should('contain', 'A1');
-      // cy.get('.v-data-table').should('contain', 'A2');
-      // cy.get('.v-data-table').should('contain', 'A6');
     });
   });
-
-
-// ******** Como voluntário:
-// 1: Criar novo perfil
-//    - sem participações; (DONE)
-//    - com participações; (DONE)
-
-// 2: Verificar se o número total de participações é mostrado corretamente no novo perfil; (DONE)
-
-// 3: Verificar se pelo menos uma das participações selecionadas aparece na lista.
-
-
-
-// ******** Como utilizador não autenticado:
-// 1. Verificar que, depois de um voluntário criar o seu perfil, este é listado na lista de todos os perfis de voluntários.
-
-// describe('Volunteer Profile Listing', () => {
-//   it('displays created profile in public listing', () => {
-//     // Create a new volunteer profile
-//    cy.createVolunteerProfile(SHORT_BIO);
-
-//     // Logout
-//     cy.logout();
-
-//     // Profile Listing as an non-authenticated user
-//     cy.visit('/profiles/volunteers');
-
-//     // Verify the created profile is listed
-//     cy.get('[data-cy=volunteerProfilesList]')
-      // .should('contain', VOLUNTEER_NAME)
-      // .and('contain', SHORT_BIO);
-//   });
-// });

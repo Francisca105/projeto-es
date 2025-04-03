@@ -61,6 +61,7 @@
         <h2>Selected Participations</h2>
         <div>
           <v-card class="table">
+            
             <v-data-table :headers="headers" :search="search" disable-pagination :hide-default-footer="true"
               :mobile-breakpoint="0" :items="profile.selectedParticipations">
               <template v-slot:item.activityName="{ item }">
@@ -219,7 +220,6 @@ export default class VolunteerProfileView extends Vue {
 
   onCloseProfileDialog() {
     this.volunteerProfileDialog = false;
-    // TODO: Check if needs anything else to be reseted
   }
 }
 </script>

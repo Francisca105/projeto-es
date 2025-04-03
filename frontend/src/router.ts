@@ -26,12 +26,12 @@ import VolunteerView from '@/views/volunteer/VolunteerView.vue';
 import InstitutionActivityEnrollmentsView from '@/views/member/InstitutionActivityEnrollmentsView.vue';
 import InstitutionAssessmentsView from '@/views/member/InstitutionAssessmentsView.vue';
 import VolunteerEnrollmentsView from '@/views/volunteer/VolunteerEnrollmentsView.vue';
-import VolunteerProfileView from "@/views/profile/VolunteerProfileView.vue";
-import ProfilesView from "@/views/profile/ProfilesView.vue";
-import ProfilesListView from "@/views/profile/ProfilesListView.vue";
-import InstitutionProfileView from "@/views/profile/InstitutionProfileView.vue";
-import InstitutionActivitySuggestionsView from "@/views/member/InstitutionActivitySuggestionsView.vue";
-import VolunteerActivitySuggestionsView from "@/views/volunteer/VolunteerActivitySuggestionsView.vue";
+import VolunteerProfileView from '@/views/profile/VolunteerProfileView.vue';
+import ProfilesView from '@/views/profile/ProfilesView.vue';
+import ProfilesListView from '@/views/profile/ProfilesListView.vue';
+import InstitutionProfileView from '@/views/profile/InstitutionProfileView.vue';
+import InstitutionActivitySuggestionsView from '@/views/member/InstitutionActivitySuggestionsView.vue';
+import VolunteerActivitySuggestionsView from '@/views/volunteer/VolunteerActivitySuggestionsView.vue';
 
 Vue.use(Router);
 

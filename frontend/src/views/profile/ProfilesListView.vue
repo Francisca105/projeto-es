@@ -4,7 +4,7 @@
       <v-card-title>
         <h2>Volunteer Profiles</h2>
       </v-card-title>
-      <v-data-table :headers="headersVolunteerProfile" :items="volunteerProfiles" :search="search" disable-pagination
+      <v-data-table :headers="headersVolunteerProfile" :items="volunteerProfiles" :search="search_volunteer" disable-pagination
         :hide-default-footer="true" :mobile-breakpoint="0">
         <template v-slot:item.volunteer.creationDate="{ item }">
           {{ ISOtoString(item.volunteer.creationDate) }}
@@ -14,7 +14,7 @@
         </template>
         <template v-slot:top>
           <v-card-title>
-            <v-text-field v-model="search" append-icon="search" label="Search" class="mx-2" />
+            <v-text-field v-model="search_volunteer" append-icon="search" label="Search" class="mx-2" />
           </v-card-title>
         </template>
         <template v-slot:item.action="{ item }">
@@ -34,14 +34,14 @@
       <v-card-title>
         <h2>Institution Profiles</h2>
       </v-card-title>
-      <v-data-table :headers="headersInstitutionProfile" :items="institutionProfiles" :search="search"
+      <v-data-table :headers="headersInstitutionProfile" :items="institutionProfiles" :search="search_institution"
         disable-pagination :hide-default-footer="true" :mobile-breakpoint="0">
         <template v-slot:item.institution.creationDate="{ item }">
           {{ ISOtoString(item.institution.creationDate) }}
         </template>
         <template v-slot:top>
           <v-card-title>
-            <v-text-field v-model="search" append-icon="search" label="Search" class="mx-2" />
+            <v-text-field v-model="search_institution" append-icon="search" label="Search" class="mx-2" />
           </v-card-title>
         </template>
       </v-data-table>
@@ -51,7 +51,7 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import { ISOtoString } from "@/services/ConvertDateService";
+import { ISOtoString } from '@/services/ConvertDateService';
 import { show } from 'cli-cursor';
 import RemoteServices from '@/services/RemoteServices';
 import VolunteerProfile from '@/models/volunteer/VolunteerProfile';
@@ -63,7 +63,8 @@ export default class ProfilesListView extends Vue {
   volunteerProfiles: VolunteerProfile[] = []; // this is the object that will be used to fill in the table
   //institutionProfiles: InstitutionProfile[] = []; // TODO: this is the object that will be used to fill in the table
 
-  search: string = '';
+  search_volunteer: string = '';
+  search_institution: string = '';
 
   headersVolunteerProfile: object = [
     { text: 'Name', value: 'volunteer.name', align: 'left', width: '10%' },

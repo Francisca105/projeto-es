@@ -6,17 +6,14 @@
       <v-card-text>
         <!-- Short Bio Section -->
         <div class="mb-4">
-          <label class="text-subtitle-2 font-weight-medium">*Short bio</label>
             <v-text-field
+              label="*Short bio"
+              :rules="[(v) => !!v || 'Enter a Short bio']"
+              required
               data-cy="volunteerProfileCreationShortBio"
               v-model="volunteerProfile.shortBio"
-              outlined
-              dense
-              placeholder="Enter a short bio"
             ></v-text-field>
-            </div>
-        
-        <v-divider class="my-4"></v-divider>
+        </div>
         
         <!-- Selected Participations Section -->
         <div>
@@ -26,10 +23,23 @@
             :headers="headers"
             :items="participations"
             :items-per-page="5"
+            :search="search"
             show-select
             v-model="volunteerProfile.selectedParticipations"
             class="elevation-1"
             >
+
+            <template v-slot:top>
+              <v-card-title>
+                <v-text-field
+                  v-model="search"
+                  append-icon="search"
+                  label="Search"
+                  class="mx-2"
+                />
+                <v-spacer />
+              </v-card-title>
+            </template>
 
             <template v-slot:item.activity_name="{ item }">
               {{ activityName(item) }}
@@ -53,8 +63,8 @@
       
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn color="grey darken-3" text @click="onClose">CLOSE</v-btn>
-        <v-btn color="grey darken-3" text @click="onSave">SAVE</v-btn>
+          <v-btn color="grey darken-3" text @click="onClose">CLOSE</v-btn>
+        <v-btn v-if="canSave" color="grey darken-3" text @click="onSave">SAVE</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -89,6 +99,7 @@ export default {
   data() {
     return {
       volunteerProfileDialog: this.value,
+      search: '',
       headers: [
         { text: '', value: 'icon', sortable: false, width: '50px' },
         { text: 'Activity Name', value: 'activity_name' },
@@ -122,6 +133,12 @@ export default {
     },
     onSave() {
       this.$emit('create-profile-dialog');
+    },
+    canSave() {
+      return (
+        !!this.volunteerProfile.shortBio &&
+        this.volunteerProfile.shortBio.length >= 10
+      );
     }
   }
 }
