@@ -1,7 +1,16 @@
 <template>
   <div class="container">
+
+    <!-- No Volunteer Profile found and not a volunteer -->
+    <div v-if="!ownProfile && !profile.id">
+      <h1>Volunteer Profile</h1>
+      <div class="no-profile-message">
+        <p>No volunteer profile found.</p>
+      </div>
+    </div>
+    
     <!-- Button to Create Volunteer Profile -->
-    <div class="horizontal-btn-container" v-if="!profile.id">
+    <div class="horizontal-btn-container" v-else-if="!profile.id">
       <h1>Volunteer Profile</h1>
       <div class="no-profile-message">
         <p>No volunteer profile found. Click the button below to create a new one!</p>
@@ -10,6 +19,8 @@
         CREATE MY PROFILE
       </v-btn>
     </div>
+
+    <!-- Volunteer Profile found -->
     <div v-else>
       <h1>Volunteer: {{ profile.volunteer?.name }}</h1>
       <div class="text-description">
@@ -116,6 +127,7 @@ import VolunteerProfileDialog from '@/views/profile/VolunteerProfileDialog.vue';
 })
 export default class VolunteerProfileView extends Vue {
   userId: number = 0;
+  ownProfile: boolean = false;
 
   activities: Activity[] = [];
   participations: Participation[] = [];
@@ -123,6 +135,10 @@ export default class VolunteerProfileView extends Vue {
 
   volunteerProfileDialog: boolean = false;
   private newProfile: VolunteerProfile = new VolunteerProfile();
+
+  get isVolunteer() {
+    return this.$store.getters.isVolunteer;
+  }
 
   search: string = '';
   headers: object = [
@@ -157,13 +173,14 @@ export default class VolunteerProfileView extends Vue {
 
     try {
       this.userId = Number(this.$route.params.id);
+      this.ownProfile = this.$store.getters.getUser?.id == this.userId && this.isVolunteer;  
       this.profile = await RemoteServices.getVolunteerProfile(this.userId);
-      if(!this.profile.id) {
+
+      if(!this.profile.id && this.ownProfile) {
         this.activities = await RemoteServices.getActivities();
         this.participations = await RemoteServices.getVolunteerParticipations();
       }
 
-      console.log("created XY", this.activities, this.participations);
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -173,8 +190,6 @@ export default class VolunteerProfileView extends Vue {
   async onCreateProfileDialog() {
     await this.$store.dispatch('loading');
     try {
-      // Chama o serviço para criar o perfil
-      console.log("onCreateProfileDialog newProfile", this.newProfile);
       const createdProfile = await RemoteServices.createVolunteerProfile(this.newProfile);
       this.profile = createdProfile;
       this.volunteerProfileDialog = false;
@@ -221,6 +236,7 @@ export default class VolunteerProfileView extends Vue {
   onCloseProfileDialog() {
     this.volunteerProfileDialog = false;
   }
+
 }
 </script>
 
