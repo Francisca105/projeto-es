@@ -2,7 +2,7 @@
   <div class="container">
 
     <!-- No Volunteer Profile found and not a volunteer -->
-    <div v-if="!ownProfile && !profile.id">
+    <div v-if="!this.isVolunteer && !profile.id">
       <h1>Volunteer Profile</h1>
       <div class="no-profile-message">
         <p>No volunteer profile found.</p>
@@ -173,8 +173,8 @@ export default class VolunteerProfileView extends Vue {
 
     try {
       this.userId = Number(this.$route.params.id);
-      this.ownProfile = this.$store.getters.getUser?.id == this.userId && this.isVolunteer;  
       this.profile = await RemoteServices.getVolunteerProfile(this.userId);
+      this.ownProfile = this.$store.getters.getUser?.id == this.userId && this.isVolunteer; 
 
       if(!this.profile.id && this.ownProfile) {
         this.activities = await RemoteServices.getActivities();

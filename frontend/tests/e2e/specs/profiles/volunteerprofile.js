@@ -2,8 +2,6 @@ describe('VolunteerProfile', () => {
     beforeEach(() => {
       cy.deleteAllButArs();
       cy.createDemoEntities();
-      // cy.createDatabaseInfoForVolunteerAssessments()
-      // cy.createDatabaseInfoForParticipations()
     });
   
     afterEach(() => {
@@ -13,14 +11,14 @@ describe('VolunteerProfile', () => {
     
     it('creates volunteer profile without participations', () => {
       cy.demoVolunteerLogin();
-        const SHORT_BIO = 'Test short bio for Cypress';
+      const SHORT_BIO = 'Test short bio for Cypress';
   
       // Intercept profile API calls
-      cy.intercept('GET', '/profiles/volunteer/2').as('getProfile');
-      cy.intercept('POST', '/profiles/volunteer/2').as('createProfile');
+      cy.intercept('GET', '/profiles/volunteer/3').as('getProfile');
+      cy.intercept('POST', '/profiles/volunteer/3').as('createProfile');
   
       // Navigate to profile page
-      cy.visit('/profiles/volunteer/2');
+      cy.visit('/profiles/volunteer/3');
   
       // Verify initial state - no profile
       cy.get('[data-cy=userLoginButton]')
@@ -59,18 +57,16 @@ describe('VolunteerProfile', () => {
 
     it('create volunteer profile with participations', () => {
       cy.demoVolunteerLogin();
-        // cy.createDatabaseInfoForAssessments();
-      // cy.createDatabaseInfoForParticipations();
       cy.createDatabaseFullInfoForAssessments()
 
       const SHORT_BIO = 'Test short bio for Cypress';
   
       // Intercept profile API calls
-      cy.intercept('GET', '/profiles/volunteer/2').as('getProfile');
-      cy.intercept('POST', '/profiles/volunteer/2').as('createProfile');
+      cy.intercept('GET', '/profiles/volunteer/3').as('getProfile');
+      cy.intercept('POST', '/profiles/volunteer/3').as('createProfile');
   
       // Navigate to profile page
-      cy.visit('/profiles/volunteer/2');
+      cy.visit('/profiles/volunteer/3');
   
       // Verify initial state - no profile
       cy.get('[data-cy=userLoginButton]')
@@ -119,6 +115,8 @@ describe('VolunteerProfile', () => {
 
 
     it('get volunteer profile', () => {
+      const SHORT_BIO = 'Test short bio for Cypress';
+
       // Starts without any profiles
       cy.visit('/profiles/view');
   
@@ -136,8 +134,6 @@ describe('VolunteerProfile', () => {
       });
 
       cy.createDatabaseInfoForVolunteerProfile()
-
-      const SHORT_BIO = 'Test short bio for Cypress';
   
       // Intercept profile API calls
       cy.visit('/profiles/view');
@@ -166,21 +162,21 @@ describe('VolunteerProfile', () => {
         
         // Click the eye icon in the first row's action cell
         cy.get('tbody tr:first-child .v-icon.mdi-eye').click();
-      });
+        });
     
-      // Verify navigation to profile view
-      cy.url().should('include', `/profiles/volunteer/`);
-      
-      // Verify profile details
-      cy.get('.text-description p')
-        .should('contain', SHORT_BIO);
-  
-      // Verify stats
-      const stats = ['Total Enrollments', 'Total Participations', 'Total Assessments', 'Average Rating'];
-      stats.forEach((stat, index) => {
-        cy.get('.stats-container .items').eq(index)
-          .should('contain', stat)
-          .and('contain', '0');
-      });
+        // Verify navigation to profile view
+        cy.url().should('include', `/profiles/volunteer/`);
+        
+        // Verify profile details
+        cy.get('.text-description p')
+          .should('contain', SHORT_BIO);
+    
+        // Verify stats
+        const stats = ['Total Enrollments', 'Total Participations', 'Total Assessments', 'Average Rating'];
+        stats.forEach((stat, index) => {
+          cy.get('.stats-container .items').eq(index)
+            .should('contain', stat)
+            .and('contain', '0');
+        });
     });
   });
